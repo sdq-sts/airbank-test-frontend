@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+    dev:
+      container_name: airbank_ui_dev
+      image: airbank-ui-dev:0.0.1
+      build:
+          context: .
+          target: development
+          dockerfile: ./Dockerfile
+      command: yarn serve
+      env_file:
+          - ".env"
+      ports:
+        - ${SERVER_PORT}:${SERVER_PORT}
+      networks:
+          - airbank-network
+      volumes:
+        - .:/usr/src/app
+        - /usr/src/app/node_modules
+      restart: unless-stopped
+
+
+    prod:
+      container_name: airbank_ui_prod
+      image: airbank-ui-prod:0.0.1
+      build:
+          context: .
+          target: production
+          dockerfile: ./Dockerfile
+      command: http-server dist
+      env_file:
+          - ".env"
+      ports:
+        - ${SERVER_PORT}:${SERVER_PORT}
+      networks:
+          - airbank-network
+      restart: unless-stopped
+
+networks:
+    airbank-network:
