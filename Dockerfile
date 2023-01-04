@@ -1,8 +1,6 @@
-FROM node:16 as development
+FROM node:16-alpine as development
 
 WORKDIR /usr/src/app
-
-RUN yarn add -g @vue/cli
 
 COPY package*.json yarn.lock ./
 
@@ -17,7 +15,7 @@ CMD ["npm", "run", "serve"]
 ##################
 # PRODUCTION
 ##################
-FROM node:16 AS production
+FROM node:16-alpine AS production
 
 RUN npm install -g http-server
 
