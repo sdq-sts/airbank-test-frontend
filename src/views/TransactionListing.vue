@@ -1,13 +1,16 @@
 <template>
-  <div>Transaction Listing
-    <v-icon name="search"/>
+  <div>
+    Transaction Listing
+    <TransactionSearch />
   </div>
 </template>
 
 <script>
-import 'vue-awesome/icons/search';
+import TransactionSearch from '@/components/Molecules/TransactionSearch.vue';
 
 export default {
-
+  components: {
+    TransactionSearch,
+  },
 };
 </script>

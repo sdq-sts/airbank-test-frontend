@@ -3,6 +3,7 @@ import Icon from 'vue-awesome/components/Icon';
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
+import './plugins/v-calendar';
 import { createProvider } from './plugins/vue-apollo';
 import './assets/tailwind.css';
 
