@@ -19,7 +19,8 @@
     "vue-apollo": "^3.0.0-beta.11",
     "vue-awesome": "^4.5.0",
     "vue-cli-plugin-apollo": "^0.22.2",
-    "vue-router": "^3.5.1"
+    "vue-router": "^3.5.1",
+    "vue-virtual-scroll-list": "^2.3.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

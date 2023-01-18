@@ -1,9 +1,0 @@
-query AllTransactions {
-  transactions {
-    id
-    currency
-    created_at
-    amount
-    reference
-  }
-}
