@@ -1,5 +1,5 @@
 <template>
-  <div class="transaction-search flex gap-8 columns-12 p-6 bg-white">
+  <div class="transaction-search flex gap-8 columns-12 py-6 bg-white">
     <div class="w-6/12">
       <InputForm v-model="searchText" />
     </div>

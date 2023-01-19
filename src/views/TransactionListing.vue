@@ -1,26 +1,31 @@
 <template>
-  <div>
+  <div class="p-8 bg-white">
     Transaction Listing
     <TransactionSearch />
 
-    <VirtualList
-      class="virtual-list"
-      :data-key="'id'"
-      :data-sources="transactions"
-      :data-component="itemRowComponent"
-      :estimate-size="70"
-      @tobottom="fetchTransactions"
-    >
-      <!-- <div slot="footer" class="loading-spinner">Loading ...</div> -->
-    </VirtualList>
-
-    <!-- <div v-for="transaction in transactions" :key="transaction.id">{{ transaction.id }} -- {{ transaction.created_at }}</div> -->
+    <table class="w-full">
+      <th class="flex columns-12 py-4 text-gray-400 text-left font-medium border-y text-base bold border-top- bg-white">
+        <div class="w-6/12">Reference</div>
+        <div class="w-3/12">Category</div>
+        <div class="w-2/12">Date</div>
+        <div class="w-1/12 text-right pr-4">Amount</div>
+      </th>
+      <VirtualList
+        class="virtual-list h-[800px] relative w-full bg-white overflow-x-auto"
+        :data-key="'id'"
+        :data-sources="transactions"
+        :data-component="itemRowComponent"
+        :estimate-size="70"
+        wrap-class="wrapper"
+        @tobottom="fetchTransactions"
+      />
+    </table>
   </div>
 </template>
 
 <script>
 import VirtualList from 'vue-virtual-scroll-list';
-import ItemRow from '@/components/Atoms/ItemRow.vue';
+import ItemRow from '@/components/Molecules/ItemRow.vue';
 import { FETCH_TRANSACTIONS_QUERY } from '@/graphql/queries/transactions.ts';
 import TransactionSearch from '@/components/Molecules/TransactionSearch.vue';
 
@@ -46,9 +51,7 @@ export default {
       try {
         const transactionsResponse = await this.$apollo.query({
           query: FETCH_TRANSACTIONS_QUERY,
-          variables: {
-            cursor: this.cursor ? new Date(this.cursor) : null,
-          },
+          variables: { cursor: this.cursor ? new Date(this.cursor) : null },
         });
         const transactionsData = transactionsResponse.data.transactions;
 
@@ -71,13 +74,18 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .virtual-list {
-  width: 100%;
-  height: 500px;
-  border: 2px solid;
-  border-radius: 3px;
-  overflow-y: auto;
-  border-color: dimgray;
+  &::-webkit-scrollbar {
+    width: 0.4em;
+  }
+
+  &::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #000;
+  }
 }
 </style>
