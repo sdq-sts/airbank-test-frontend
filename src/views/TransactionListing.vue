@@ -1,17 +1,18 @@
 <template>
   <div class="p-8 bg-white">
     Transaction Listing
-    <TransactionSearch />
+    <TransactionSearch @formData="handleSearchData" />
 
     <table class="w-full">
       <th class="flex columns-12 py-4 text-gray-400 text-left font-medium border-y text-base bold border-top- bg-white">
-        <div class="w-6/12">Reference</div>
-        <div class="w-3/12">Category</div>
-        <div class="w-2/12">Date</div>
-        <div class="w-1/12 text-right pr-4">Amount</div>
+        <td class="w-6/12">Reference</td>
+        <td class="w-4/12">Category</td>
+        <td class="w-1/12">Date</td>
+        <td class="w-1/12 text-right pr-4">Amount</td>
       </th>
       <VirtualList
         class="virtual-list h-[800px] relative w-full bg-white overflow-x-auto"
+        v-if="transactions.length"
         :data-key="'id'"
         :data-sources="transactions"
         :data-component="itemRowComponent"
@@ -19,6 +20,9 @@
         wrap-class="wrapper"
         @tobottom="fetchTransactions"
       />
+      <div class="text-center my-6" v-else>
+        No data found for this search
+      </div>
     </table>
   </div>
 </template>
@@ -41,7 +45,41 @@ export default {
       transactions: [],
       transactionsQueryCursor: null,
       isLoadingTransactions: false,
+      isNewSearch: false,
+      search: '',
+      bank: '',
+      account: '',
+      startDate: '',
+      endDate: '',
     };
+  },
+
+  computed: {
+    searchData() {
+      const {
+        search,
+        bank,
+        account,
+        startDate,
+        endDate,
+      } = this;
+      return {
+        search,
+        bank,
+        account,
+        startDate,
+        endDate,
+      };
+    },
+  },
+
+  watch: {
+    searchData: {
+      handler: function searchDataWatcher() {
+        this.isNewSearch = true;
+      },
+      deep: true,
+    },
   },
 
   methods: {
@@ -51,20 +89,43 @@ export default {
       try {
         const transactionsResponse = await this.$apollo.query({
           query: FETCH_TRANSACTIONS_QUERY,
-          variables: { cursor: this.cursor ? new Date(this.cursor) : null },
+          variables: {
+            ...(this.search && { search: this.search }),
+            ...(this.bank && { bank: this.bank }),
+            ...(this.account && { account: this.account }),
+            ...(this.startDate && { startDate: this.startDate }),
+            ...(this.endDate && { endDate: this.endDate }),
+            cursor: this.cursor ? new Date(this.cursor) : null,
+          },
         });
+        if (this.isNewSearch) {
+          this.transactions = [];
+        }
         const transactionsData = transactionsResponse.data.transactions;
 
-        const transactionsDataCursor = transactionsData[transactionsData.length - 1].created_at;
-        const isLastCursor = transactionsDataCursor === this.cursor;
+        if (transactionsData.length) {
+          const transactionsDataCursor = transactionsData[transactionsData.length - 1].created_at;
+          const isLastCursor = transactionsDataCursor === this.cursor;
 
-        this.transactions = isLastCursor ? [...this.transactions] : [...this.transactions, ...transactionsData];
-        this.cursor = transactionsDataCursor;
+          this.transactions = isLastCursor ? [...this.transactions] : [...this.transactions, ...transactionsData];
+          this.cursor = transactionsDataCursor;
+        }
       } catch (error) {
         console.error(error);
       } finally {
-        this.isLoadingTransactions = true;
+        this.isNewSearch = false;
+        this.isLoadingTransactions = false;
       }
+    },
+
+    handleSearchData(data) {
+      this.search = data.search;
+      this.bank = data.bank;
+      this.account = data.account;
+      this.startDate = data.range?.start;
+      this.endDate = data.range?.end;
+
+      this.fetchTransactions();
     },
   },
 

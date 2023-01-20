@@ -6,9 +6,13 @@
         @input="handleInput"
         id="search"
         type="text"
-        class="form-input text-gray-500 text-base w-full mt-1 leading-7 rounded border border-gray-300 focus:outline-gray-300 py-2 pl-9"
+        :placeholder="placeholder"
+        class="form-input text-gray-500 text-base w-full mt-1 leading-7 rounded border border-gray-300 focus:outline-gray-300 py-2"
+        :class="{ 'pl-9': $slots.icon, 'pl-2': !$slots.icon }"
       />
-      <v-icon name="search" class="search-icon fill-gray-300 absolute bottom-[14px] left-2 pointer-events-none" scale="1.2" />
+      <span class="search-icon fill-gray-300 absolute bottom-[14px] left-2 pointer-events-none">
+        <slot name="icon"></slot>
+      </span>
     </label>
   </div>
 </template>
@@ -21,6 +25,11 @@ export default {
     label: {
       type: String,
       default: 'Search',
+    },
+
+    placeholder: {
+      type: String,
+      default: 'Your placeholder here',
     },
   },
 

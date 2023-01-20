@@ -1,5 +1,5 @@
 <template>
-  <div>Transaction EDIT {{ getId }}</div>
+  <div class="p-8 bg-white">Transaction EDIT {{ getId }}</div>
 </template>
 
 <script>

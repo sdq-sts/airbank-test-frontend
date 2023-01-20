@@ -58,7 +58,6 @@ export default {
 
   methods: {
     handleSelect() {
-      console.log('WTF');
       this.$emit('input', this.selectedOption);
     },
   },
