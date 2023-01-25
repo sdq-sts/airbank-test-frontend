@@ -1,7 +1,11 @@
 <template>
   <div class="p-8 bg-white">
     Transaction Listing
-    <TransactionSearch @formData="handleSearchData" />
+    <TransactionSearch
+      :bankOptions="bankOptions"
+      :accountOptions="accountOptions"
+      @formData="handleSearchData"
+    />
 
     <table class="w-full">
       <th class="flex columns-12 py-4 text-gray-400 text-left font-medium border-y text-base bold border-top- bg-white">
@@ -31,6 +35,7 @@
 import VirtualList from 'vue-virtual-scroll-list';
 import ItemRow from '@/components/Molecules/ItemRow.vue';
 import { FETCH_TRANSACTIONS_QUERY } from '@/graphql/queries/transactions.ts';
+import { FETCH_ACCOUNTS_QUERY } from '@/graphql/queries/accounts.ts';
 import TransactionSearch from '@/components/Molecules/TransactionSearch.vue';
 
 export default {
@@ -51,6 +56,8 @@ export default {
       account: '',
       startDate: '',
       endDate: '',
+      bankOptions: [],
+      accountOptions: [],
     };
   },
 
@@ -98,9 +105,12 @@ export default {
             cursor: this.cursor ? new Date(this.cursor) : null,
           },
         });
+
         if (this.isNewSearch) {
           this.transactions = [];
+          this.cursor = null;
         }
+
         const transactionsData = transactionsResponse.data.transactions;
 
         if (transactionsData.length) {
@@ -127,9 +137,29 @@ export default {
 
       this.fetchTransactions();
     },
+
+    async fetchFormOptions() {
+      try {
+        const accountsResponse = await this.$apollo.query({ query: FETCH_ACCOUNTS_QUERY });
+        const accountsData = accountsResponse.data.accounts;
+        const banks = [...new Set(accountsData.map((account) => account.bank))];
+
+        this.accountOptions = [
+          { value: '', text: 'No filter applied' },
+          ...accountsData.map((acc) => ({ value: acc.id, text: `${acc.name} - ${acc.bank}` })),
+        ];
+        this.bankOptions = [
+          { value: '', text: 'No filter applied' },
+          ...banks.map((bank) => ({ value: bank, text: bank })),
+        ];
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
 
   mounted() {
+    this.fetchFormOptions();
     this.fetchTransactions();
   },
 };

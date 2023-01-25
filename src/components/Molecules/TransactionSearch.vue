@@ -1,7 +1,7 @@
 <template>
   <div class="transaction-search flex gap-8 columns-12 py-6 bg-white">
     <div class="w-6/12">
-      <InputForm v-model="searchText" @input="emitData">
+      <InputForm v-model="searchText" @input="emitData" placeholder="Search by bank, account, reference, category, amount, currency...">
         <template #icon>
           <v-icon name="search" scale="1.2" />
         </template>
@@ -9,11 +9,11 @@
     </div>
 
     <div class="w-2/12">
-      <SelectForm v-model="selectedBankOption" @input="emitData" />
+      <SelectForm label="Bank" :options="bankOptions" v-model="selectedBankOption" @input="emitData" />
     </div>
 
     <div class="w-2/12">
-      <SelectForm v-model="selectedAccountOption" @input="emitData" />
+      <SelectForm label="Account" :options="accountOptions" v-model="selectedAccountOption" @input="emitData" />
     </div>
 
     <div class="w-2/12">
@@ -33,6 +33,17 @@ export default {
     InputForm,
     SelectForm,
     SelectDateRange,
+  },
+
+  props: {
+    bankOptions: {
+      type: [String],
+      required: true,
+    },
+    accountOptions: {
+      type: [String],
+      required: true,
+    },
   },
 
   data() {
