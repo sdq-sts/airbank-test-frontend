@@ -29,9 +29,7 @@ export default {
     },
     source: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: () => ({}),
     },
   },
 };

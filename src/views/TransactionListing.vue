@@ -1,6 +1,6 @@
 <template>
-  <div class="p-8 bg-white">
-    Transaction Listing
+  <main class="p-8 bg-white">
+    <h1 class="text-xl uppercase">Transactions</h1>
     <TransactionSearch
       :bankOptions="bankOptions"
       :accountOptions="accountOptions"
@@ -28,12 +28,12 @@
         No data found for this search
       </div>
     </table>
-  </div>
+  </main>
 </template>
 
 <script>
 import VirtualList from 'vue-virtual-scroll-list';
-import ItemRow from '@/components/Molecules/ItemRow.vue';
+import ItemRow from '@/components/Molecules/TransactionsRow.vue';
 import { FETCH_TRANSACTIONS_QUERY } from '@/graphql/queries/transactions.ts';
 import { FETCH_ACCOUNTS_QUERY } from '@/graphql/queries/accounts.ts';
 import TransactionSearch from '@/components/Molecules/TransactionSearch.vue';

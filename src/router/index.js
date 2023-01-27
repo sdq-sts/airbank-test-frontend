@@ -11,8 +11,8 @@ const routes = [
   },
   {
     path: '/transactions/:id',
-    name: 'TransactionEdit',
-    component: () => import(/* webpackChunkName: "transaction-edit" */ '../views/TransactionEdit.vue'),
+    name: 'TransactionDetails',
+    component: () => import(/* webpackChunkName: "transaction-details" */ '../views/TransactionDetails.vue'),
   },
 ];
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="transaction-search flex gap-8 columns-12 py-6 bg-white">
+  <div class="flex gap-8 columns-12 py-6 bg-white">
     <div class="w-6/12">
       <InputForm v-model="searchText" @input="emitData" placeholder="Search by bank, account, reference, category, amount, currency...">
         <template #icon>
@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import 'vue-awesome/icons/search';
 import { debounce } from '@/helpers';
 import InputForm from '@/components/Atoms/InputForm.vue';
 import SelectForm from '@/components/Atoms/SelectForm.vue';
