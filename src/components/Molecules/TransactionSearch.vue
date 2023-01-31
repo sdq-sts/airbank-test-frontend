@@ -38,11 +38,11 @@ export default {
 
   props: {
     bankOptions: {
-      type: [String],
+      type: Array,
       required: true,
     },
     accountOptions: {
-      type: [String],
+      type: Array,
       required: true,
     },
   },

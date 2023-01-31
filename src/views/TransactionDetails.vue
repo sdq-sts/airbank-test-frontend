@@ -32,20 +32,19 @@
     </div>
 
     <div class="bg-slate-50 columns-12 flex p-8">
-      <BaseDropdown @selected="handleSelectedCategory" @input="fetchCategories" />
+      <BaseDropdown
+        label="Category"
+        @selected="handleSelectedCategory"
+        @input="fetchCategories"
+        @create="handleCreateCategory"
+        :options="categories"
+        :category="transactionCategory"
+      />
     </div>
 
     <div class="text-xs text-gray-400 text-right mt-4">
       <span>Created at {{ new Date(transactionDetails.created_at).toLocaleDateString('en-GB') }}</span>
     </div>
-
-    <!-- <pre>
-      {{ transactionDetails }}
-    </pre>
-
-    <pre>
-      {{ categories }}
-    </pre> -->
   </main>
 </template>
 
@@ -53,6 +52,9 @@
 import { FETCH_TRANSACTION_DETAILS_QUERY } from '@/graphql/queries/transactionDetails.ts';
 import { FETCH_CATEGORIES_QUERY } from '@/graphql/queries/categories.ts';
 import BaseDropdown from '@/components/Molecules/CategoryDropdown.vue';
+import { UPDATE_TRANSACTION_MUTATION } from '@/graphql/mutations/updateTransaction.ts';
+import { CREATE_CATEGORY_MUTATION } from '@/graphql/mutations/createCategory.ts';
+import { debounce } from '@/helpers';
 
 export default {
   components: {
@@ -63,10 +65,22 @@ export default {
     return {
       transactionDetails: {},
       categories: [],
+      transactionCategory: null,
     };
   },
 
   methods: {
+    fetchCategories: debounce(async function fetchCategories(event) {
+      const search = event.target.value;
+      const categoriesResponse = await this.$apollo.query({
+        query: FETCH_CATEGORIES_QUERY,
+        variables: { search },
+        fetchPolicy: 'network-only',
+      });
+
+      this.categories = categoriesResponse.data.categories;
+    }, 500),
+
     async fetchTransactionDetails(id) {
       const transactionDetailsResponse = await this.$apollo.query({
         query: FETCH_TRANSACTION_DETAILS_QUERY,
@@ -74,27 +88,32 @@ export default {
       });
 
       this.transactionDetails = transactionDetailsResponse.data.transaction;
+      this.transactionCategory = this.transactionDetails?.category;
     },
 
-    handleSelectedCategory(event) {
-      console.log(event);
-    },
+    async handleSelectedCategory(event) {
+      const { id } = this.transactionDetails;
+      const data = { category_id: event.id };
 
-    async fetchCategories(event) {
-      console.log(event);
-      const categoriesResponse = await this.$apollo.query({
-        query: FETCH_CATEGORIES_QUERY,
-        variables: {},
+      await this.$apollo.mutate({
+        mutation: UPDATE_TRANSACTION_MUTATION,
+        variables: { updateTransactionInput: { id, data } },
       });
-      this.categories = categoriesResponse.data.categories;
-      console.log(categoriesResponse);
+    },
+
+    async handleCreateCategory(event) {
+      const { name, color } = event;
+
+      await this.$apollo.mutate({
+        mutation: CREATE_CATEGORY_MUTATION,
+        variables: { createCategoryInput: { name, color } },
+      });
     },
   },
 
   mounted() {
     const { id } = this.$route.params;
     this.fetchTransactionDetails(id);
-    this.fetchCategories();
   },
 };
 </script>
