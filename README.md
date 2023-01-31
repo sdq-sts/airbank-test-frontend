@@ -1,4 +1,4 @@
-# Friday Finance - Backend
+# Friday Finance - Frontend
 
 ## Description
 This repository contains code for the test of fullstack developer at Friday Finance
